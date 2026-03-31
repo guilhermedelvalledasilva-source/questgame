@@ -18,6 +18,7 @@ interface RewardShopProps {
 const EMOJI_OPTIONS = ['🎮', '🍕', '🏖️', '🎬', '🎁', '🎧', '📱', '🍫', '☕', '🎨', '📚', '🛒'];
 
 export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: RewardShopProps) {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
