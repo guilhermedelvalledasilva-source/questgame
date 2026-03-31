@@ -71,7 +71,7 @@ const Index = () => {
           </div>
 
           <div>
-            <RewardShop rewards={rewards} gold={gold} onPurchase={purchaseReward} onDelete={deleteReward} />
+            <RewardShop rewards={rewards} gold={gold} onPurchase={purchaseReward} onDelete={deleteReward} onAdd={addReward} />
           </div>
         </div>
       </main>
