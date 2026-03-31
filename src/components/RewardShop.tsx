@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 import type { Reward } from '@/hooks/useGameState';
 
 interface RewardShopProps {
@@ -17,6 +18,7 @@ interface RewardShopProps {
 const EMOJI_OPTIONS = ['🎮', '🍕', '🏖️', '🎬', '🎁', '🎧', '📱', '🍫', '☕', '🎨', '📚', '🛒'];
 
 export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: RewardShopProps) {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -109,7 +111,10 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
               <Button
                 size="sm"
                 disabled={gold < reward.cost}
-                onClick={() => onPurchase(reward.id)}
+                onClick={() => {
+                  onPurchase(reward.id);
+                  toast({ title: `${reward.icon} ${reward.name}`, description: 'Recompensa comprada com sucesso!' });
+                }}
                 className="text-xs bg-gold/20 text-gold border border-gold/30 hover:bg-gold/30 disabled:opacity-40"
               >
                 Comprar
