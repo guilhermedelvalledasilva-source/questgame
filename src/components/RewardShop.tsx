@@ -111,7 +111,10 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
               <Button
                 size="sm"
                 disabled={gold < reward.cost}
-                onClick={() => onPurchase(reward.id)}
+                onClick={() => {
+                  onPurchase(reward.id);
+                  toast({ title: `${reward.icon} ${reward.name}`, description: 'Recompensa comprada com sucesso!' });
+                }}
                 className="text-xs bg-gold/20 text-gold border border-gold/30 hover:bg-gold/30 disabled:opacity-40"
               >
                 Comprar
