@@ -1,6 +1,8 @@
-import { motion } from 'framer-motion';
-import { Coins, ShoppingBag } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, X, Coins, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import type { Reward } from '@/hooks/useGameState';
 
 interface RewardShopProps {
@@ -8,14 +10,39 @@ interface RewardShopProps {
   gold: number;
   onPurchase: (id: string) => void;
   onDelete: (id: string) => void;
+  onAdd: (reward: Omit<Reward, 'id' | 'purchased'>) => void;
 }
 
-export function RewardShop({ rewards, gold, onPurchase, onDelete }: RewardShopProps) {
+const EMOJI_OPTIONS = ['🎮', '🍕', '🏖️', '🎬', '🎁', '🎧', '📱', '🍫', '☕', '🎨', '📚', '🛒'];
+
+export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: RewardShopProps) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [cost, setCost] = useState(100);
+  const [icon, setIcon] = useState('🎁');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    onAdd({ name: name.trim(), description: description.trim(), cost, icon });
+    setName(''); setDescription(''); setCost(100); setIcon('🎁');
+    setOpen(false);
+  };
+
   return (
     <div>
-      <div className="flex items-center gap-2 mb-4">
-        <ShoppingBag className="w-5 h-5 text-gold" />
-        <h2 className="text-lg font-bold text-foreground">Loja de Recompensas</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <ShoppingBag className="w-5 h-5 text-gold" />
+          <h2 className="text-lg font-bold text-foreground">Loja de Recompensas</h2>
+        </div>
+        <button
+          onClick={() => setOpen(true)}
+          className="p-1.5 rounded-lg border border-border bg-muted hover:border-gold/50 hover:bg-gold/10 transition-colors text-gold"
+        >
+          <Plus className="w-4 h-4" />
+        </button>
       </div>
       <div className="grid gap-3">
         {rewards.map((reward, i) => (
@@ -30,11 +57,11 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete }: RewardShopPr
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-semibold text-foreground">{reward.name}</h3>
               <p className="text-xs text-muted-foreground">{reward.description}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 text-sm font-bold text-gold">
-                <Coins className="w-4 h-4" /> {reward.cost}
+              <span className="flex items-center gap-1 text-xs font-bold text-gold mt-1">
+                <Coins className="w-3.5 h-3.5" /> {reward.cost}
               </span>
+            </div>
+            <div className="flex flex-col gap-1.5">
               <Button
                 size="sm"
                 disabled={gold < reward.cost}
@@ -45,14 +72,75 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete }: RewardShopPr
               </Button>
               <button
                 onClick={() => onDelete(reward.id)}
-                className="opacity-0 group-hover:opacity-100 text-xs text-muted-foreground hover:text-destructive transition-all"
+                className="opacity-0 group-hover:opacity-100 text-[10px] text-muted-foreground hover:text-destructive transition-all text-center"
               >
-                ✕
+                remover
               </button>
             </div>
           </motion.div>
         ))}
       </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
+            onClick={() => setOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-bold text-foreground">🎁 Nova Recompensa</h2>
+                <button onClick={() => setOpen(false)} className="p-1 rounded hover:bg-muted text-muted-foreground">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nome</label>
+                  <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: 1 Hora de Jogo" className="mt-1 bg-muted border-border" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
+                  <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Detalhes da recompensa..." className="mt-1 bg-muted border-border" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Custo (Ouro)</label>
+                  <Input type="number" min={1} value={cost} onChange={e => setCost(Number(e.target.value))} className="mt-1 bg-muted border-border" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Ícone</label>
+                  <div className="flex flex-wrap gap-2">
+                    {EMOJI_OPTIONS.map(e => (
+                      <button
+                        key={e}
+                        type="button"
+                        onClick={() => setIcon(e)}
+                        className={`text-xl p-1.5 rounded-lg border transition-all ${
+                          icon === e ? 'border-gold/50 bg-gold/20 scale-110' : 'border-border bg-muted hover:border-muted-foreground/30'
+                        }`}
+                      >
+                        {e}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <Button type="submit" className="w-full bg-gold/20 text-gold border border-gold/30 hover:bg-gold/30 font-semibold">
+                  Criar Recompensa 🎁
+                </Button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
