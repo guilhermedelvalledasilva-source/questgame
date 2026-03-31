@@ -9,7 +9,7 @@ import { RewardShop } from '@/components/RewardShop';
 const Index = () => {
   const {
     xp, gold, quests, rewards, levelInfo,
-    addQuest, toggleQuest, deleteQuest, purchaseReward, deleteReward,
+    addQuest, toggleQuest, deleteQuest, purchaseReward, addReward, deleteReward,
   } = useGameState();
 
   const activeQuests = quests.filter(q => !q.completed);
@@ -71,7 +71,7 @@ const Index = () => {
           </div>
 
           <div>
-            <RewardShop rewards={rewards} gold={gold} onPurchase={purchaseReward} onDelete={deleteReward} />
+            <RewardShop rewards={rewards} gold={gold} onPurchase={purchaseReward} onDelete={deleteReward} onAdd={addReward} />
           </div>
         </div>
       </main>
