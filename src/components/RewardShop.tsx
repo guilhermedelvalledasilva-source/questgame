@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, Coins, ShoppingBag } from 'lucide-react';
+import { Plus, Coins, ShoppingBag } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import type { Reward } from '@/hooks/useGameState';
 
 interface RewardShopProps {
@@ -37,12 +38,55 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
           <ShoppingBag className="w-5 h-5 text-gold" />
           <h2 className="text-lg font-bold text-foreground">Loja de Recompensas</h2>
         </div>
-        <button
-          onClick={() => setOpen(true)}
-          className="p-1.5 rounded-lg border border-border bg-muted hover:border-gold/50 hover:bg-gold/10 transition-colors text-gold"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <button
+              type="button"
+              className="p-1.5 rounded-lg border border-border bg-muted hover:border-gold/50 hover:bg-gold/10 transition-colors text-gold"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </DialogTrigger>
+          <DialogContent className="w-[calc(100vw-2rem)] max-w-md rounded-xl border border-border bg-card p-6">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold text-foreground">🎁 Nova Recompensa</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nome</label>
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: 1 Hora de Jogo" className="mt-1 bg-muted border-border" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
+                <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Detalhes da recompensa..." className="mt-1 bg-muted border-border" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Custo (Ouro)</label>
+                <Input type="number" min={1} value={cost} onChange={e => setCost(Number(e.target.value))} className="mt-1 bg-muted border-border" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Ícone</label>
+                <div className="flex flex-wrap gap-2">
+                  {EMOJI_OPTIONS.map(e => (
+                    <button
+                      key={e}
+                      type="button"
+                      onClick={() => setIcon(e)}
+                      className={`text-xl p-1.5 rounded-lg border transition-all ${
+                        icon === e ? 'border-gold/50 bg-gold/20 scale-110' : 'border-border bg-muted hover:border-muted-foreground/30'
+                      }`}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Button type="submit" className="w-full bg-gold/20 text-gold border border-gold/30 hover:bg-gold/30 font-semibold">
+                Criar Recompensa 🎁
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="grid gap-3">
         {rewards.map((reward, i) => (
@@ -80,67 +124,6 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
           </motion.div>
         ))}
       </div>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
-            onClick={() => setOpen(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-5">
-                <h2 className="text-lg font-bold text-foreground">🎁 Nova Recompensa</h2>
-                <button onClick={() => setOpen(false)} className="p-1 rounded hover:bg-muted text-muted-foreground">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nome</label>
-                  <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: 1 Hora de Jogo" className="mt-1 bg-muted border-border" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
-                  <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Detalhes da recompensa..." className="mt-1 bg-muted border-border" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Custo (Ouro)</label>
-                  <Input type="number" min={1} value={cost} onChange={e => setCost(Number(e.target.value))} className="mt-1 bg-muted border-border" />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Ícone</label>
-                  <div className="flex flex-wrap gap-2">
-                    {EMOJI_OPTIONS.map(e => (
-                      <button
-                        key={e}
-                        type="button"
-                        onClick={() => setIcon(e)}
-                        className={`text-xl p-1.5 rounded-lg border transition-all ${
-                          icon === e ? 'border-gold/50 bg-gold/20 scale-110' : 'border-border bg-muted hover:border-muted-foreground/30'
-                        }`}
-                      >
-                        {e}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <Button type="submit" className="w-full bg-gold/20 text-gold border border-gold/30 hover:bg-gold/30 font-semibold">
-                  Criar Recompensa 🎁
-                </Button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
