@@ -4,6 +4,12 @@ export default {
   darkMode: ["class"],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
+  safelist: [
+    'bg-priority-low/10', 'bg-priority-low/20', 'text-priority-low', 'border-priority-low/30', 'border-priority-low/50',
+    'bg-priority-medium/10', 'bg-priority-medium/20', 'text-priority-medium', 'border-priority-medium/30', 'border-priority-medium/50',
+    'bg-priority-high/10', 'bg-priority-high/20', 'text-priority-high', 'border-priority-high/30', 'border-priority-high/50',
+    'bg-priority-critical/10', 'bg-priority-critical/20', 'text-priority-critical', 'border-priority-critical/30', 'border-priority-critical/50',
+  ],
   theme: {
     container: {
       center: true,
