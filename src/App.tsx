@@ -19,14 +19,6 @@ const queryClient = new QueryClient();
 function AppContent() {
   const game = useGameState();
 
-  const handleMarketSpend = (amount: number, itemName: string) => {
-    // We need to manually update gold and add history for market purchases
-    // Using a trick: create a temporary reward, purchase it
-    // Instead, let's directly manipulate state through a dedicated method
-    // For now, we'll use purchaseReward-like logic via the game state
-    game.purchaseReward('__market__');
-    // Actually, let's handle this properly by checking if we can add a spend method
-  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
