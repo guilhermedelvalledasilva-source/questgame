@@ -174,6 +174,20 @@ export function useGameState() {
     }));
   }, []);
 
+  const spendGold = useCallback((amount: number, source: string) => {
+    setState(s => {
+      if (s.gold < amount) return s;
+      return {
+        ...s,
+        gold: s.gold - amount,
+        history: [
+          ...s.history,
+          { id: crypto.randomUUID(), type: 'gold_spent' as const, amount, source, timestamp: Date.now() },
+        ],
+      };
+    });
+  }, []);
+
   return {
     ...state,
     levelInfo,
