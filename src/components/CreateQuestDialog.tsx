@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Repeat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import type { Priority } from '@/hooks/useGameState';
 
 interface CreateQuestDialogProps {
-  onAdd: (quest: { title: string; description: string; xpReward: number; goldReward: number; priority: Priority }) => void;
+  onAdd: (quest: { title: string; description: string; xpReward: number; goldReward: number; priority: Priority; dueDate?: number; isRoutine?: boolean }) => void;
 }
 
 const priorities: { value: Priority; label: string }[] = [
@@ -23,12 +23,22 @@ export function CreateQuestDialog({ onAdd }: CreateQuestDialogProps) {
   const [xp, setXp] = useState(50);
   const [gold, setGold] = useState(25);
   const [priority, setPriority] = useState<Priority>('medium');
+  const [dueDate, setDueDate] = useState('');
+  const [isRoutine, setIsRoutine] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
-    onAdd({ title: title.trim(), description: description.trim(), xpReward: xp, goldReward: gold, priority });
-    setTitle(''); setDescription(''); setXp(50); setGold(25); setPriority('medium');
+    onAdd({
+      title: title.trim(),
+      description: description.trim(),
+      xpReward: xp,
+      goldReward: gold,
+      priority,
+      dueDate: dueDate ? new Date(dueDate).getTime() : undefined,
+      isRoutine,
+    });
+    setTitle(''); setDescription(''); setXp(50); setGold(25); setPriority('medium'); setDueDate(''); setIsRoutine(false);
     setOpen(false);
   };
 
@@ -63,6 +73,10 @@ export function CreateQuestDialog({ onAdd }: CreateQuestDialogProps) {
             </div>
           </div>
           <div>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data de Entrega (opcional)</label>
+            <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="mt-1 bg-muted border-border" />
+          </div>
+          <div>
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Prioridade</label>
             <div className="flex gap-2">
               {priorities.map(p => (
@@ -81,6 +95,11 @@ export function CreateQuestDialog({ onAdd }: CreateQuestDialogProps) {
               ))}
             </div>
           </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={isRoutine} onChange={e => setIsRoutine(e.target.checked)} className="rounded border-border" />
+            <Repeat className="w-4 h-4 text-primary" />
+            <span className="text-xs font-medium text-foreground">Missão de rotina</span>
+          </label>
           <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
             Criar Missão ⚔️
           </Button>
