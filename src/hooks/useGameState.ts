@@ -198,5 +198,6 @@ export function useGameState() {
     purchaseReward,
     addReward,
     deleteReward,
+    spendGold,
   };
 }

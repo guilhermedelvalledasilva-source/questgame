@@ -72,12 +72,8 @@ function AppContent() {
             />
           } />
           <Route path="/market" element={
-            <MarketPage gold={game.gold} onSpend={(amount, name) => {
-              // Add a temporary reward to spend gold through the existing system
-              const tempId = crypto.randomUUID();
-              game.addReward({ name, description: '', cost: amount, icon: '⚡' });
-              // Actually let's use a direct spend approach
-            }} />
+            <MarketPage gold={game.gold} onSpend={game.spendGold} />
+          } />
           } />
           <Route path="/charts" element={<ChartsPage history={game.history} />} />
           <Route path="*" element={<NotFound />} />
