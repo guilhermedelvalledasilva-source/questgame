@@ -66,7 +66,6 @@ function AppContent() {
           <Route path="/market" element={
             <MarketPage gold={game.gold} onSpend={game.spendGold} />
           } />
-          } />
           <Route path="/charts" element={<ChartsPage history={game.history} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
