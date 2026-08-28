@@ -34,7 +34,7 @@ export default function QuestsPage({ quests, onAdd, onToggle, onDelete, onEdit }
           ))}
         </AnimatePresence>
         {activeQuests.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="text-center py-12 text-muted-foreground rounded-xl border border-dashed border-border/60">
             <p className="text-sm">Nenhuma missão ativa.</p>
             <p className="text-xs mt-1">Crie uma nova missão para começar! ⚔️</p>
           </div>

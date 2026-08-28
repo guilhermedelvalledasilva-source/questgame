@@ -28,17 +28,18 @@ export default function HomePage() {
           <motion.div
             animate={{ rotate: [0, 5, -5, 0] }}
             transition={{ repeat: Infinity, duration: 3 }}
+            className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center shadow-glow-primary"
           >
-            <Swords className="w-16 h-16 text-primary" />
+            <Swords className="w-8 h-8 text-white" />
           </motion.div>
         </div>
-        <h1 className="font-pixel text-lg text-primary">QUEST RPG</h1>
+        <h1 className="text-2xl font-bold text-foreground">Quest<span className="gradient-text-primary">RPG</span></h1>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
           Transforme suas tarefas diárias em missões épicas! Ganhe XP, colete ouro e suba de nível completando suas quests.
         </p>
         <button
           onClick={() => navigate('/quests')}
-          className="mt-4 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
+          className="mt-4 px-6 py-2.5 rounded-lg gradient-primary text-white font-semibold text-sm shadow-glow-primary hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
         >
           Começar Aventura ⚔️
         </button>
@@ -54,10 +55,11 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
+              whileHover={{ y: -2 }}
               onClick={() => navigate(f.path)}
-              className="rounded-lg border border-border bg-card p-3 text-left hover:border-primary/50 transition-colors"
+              className="rounded-xl border border-border/60 bg-card p-3 text-left shadow-elevation-1 hover:shadow-elevation-2 hover:border-primary/50 transition-all duration-200"
             >
-              <f.icon className={`w-5 h-5 ${f.color} mb-2`} />
+              <f.icon className={`w-5 h-5 ${f.color} mb-2`} strokeWidth={2} />
               <h3 className="text-xs font-bold text-foreground">{f.title}</h3>
               <p className="text-[10px] text-muted-foreground mt-1 leading-tight">{f.desc}</p>
             </motion.button>

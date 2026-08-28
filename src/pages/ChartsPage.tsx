@@ -95,22 +95,22 @@ export default function ChartsPage({ history }: ChartsPageProps) {
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-lg border border-border bg-card p-3 text-center">
+        <div className="rounded-xl border border-border/60 bg-card p-3 text-center shadow-elevation-1">
           <p className="text-[10px] text-muted-foreground uppercase">XP Ganho</p>
           <p className="text-lg font-bold text-xp">+{totals.xp}</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-3 text-center">
+        <div className="rounded-xl border border-border/60 bg-card p-3 text-center shadow-elevation-1">
           <p className="text-[10px] text-muted-foreground uppercase">Ouro Ganho</p>
           <p className="text-lg font-bold text-gold">+{totals.goldGained}</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-3 text-center">
+        <div className="rounded-xl border border-border/60 bg-card p-3 text-center shadow-elevation-1">
           <p className="text-[10px] text-muted-foreground uppercase">Ouro Gasto</p>
           <p className="text-lg font-bold text-destructive">-{totals.goldSpent}</p>
         </div>
       </div>
 
       {/* Chart */}
-      <div className="rounded-xl border border-border bg-card p-4">
+      <div className="rounded-xl border border-border/60 bg-card p-4 shadow-elevation-1">
         {chartData.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <p className="text-sm">Nenhum dado nesse período.</p>
@@ -119,33 +119,33 @@ export default function ChartsPage({ history }: ChartsPageProps) {
         ) : (
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(217 33% 18%)" />
-              <XAxis dataKey="name" tick={{ fill: 'hsl(215 20% 55%)', fontSize: 11 }} />
-              <YAxis tick={{ fill: 'hsl(215 20% 55%)', fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} />
+              <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(222 44% 9%)',
-                  border: '1px solid hsl(217 33% 18%)',
-                  borderRadius: '8px',
-                  color: 'hsl(210 40% 96%)',
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '10px',
+                  color: 'hsl(var(--card-foreground))',
                   fontSize: 12,
                 }}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="xpGained" name="XP Ganho" fill="hsl(142 71% 45%)" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="goldGained" name="Ouro Ganho" fill="hsl(45 93% 58%)" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="goldSpent" name="Ouro Gasto" fill="hsl(0 63% 50%)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="xpGained" name="XP Ganho" fill="hsl(var(--xp))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="goldGained" name="Ouro Ganho" fill="hsl(var(--gold))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="goldSpent" name="Ouro Gasto" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}
       </div>
 
       {/* History list */}
-      <div className="rounded-xl border border-border bg-card">
-        <div className="p-3 border-b border-border">
+      <div className="rounded-xl border border-border/60 bg-card shadow-elevation-1">
+        <div className="p-3 border-b border-border/60">
           <h3 className="text-sm font-semibold text-foreground">Histórico Recente</h3>
         </div>
-        <div className="max-h-60 overflow-y-auto divide-y divide-border">
+        <div className="max-h-60 overflow-y-auto divide-y divide-border/60">
           {filterByPeriod(history, period).slice().reverse().slice(0, 30).map(event => (
             <div key={event.id} className="px-3 py-2 flex items-center justify-between">
               <div>

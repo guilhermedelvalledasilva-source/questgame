@@ -64,11 +64,25 @@ function calculateLevel(totalXp: number): { level: number; currentLevelXp: numbe
   return { level, currentLevelXp: remaining, xpForNextLevel: getXpForLevel(level) };
 }
 
-const STORAGE_KEY = 'quest-rpg-state';
+const STORAGE_PREFIX = 'quest-rpg-state';
+const LEGACY_STORAGE_KEY = 'quest-rpg-state';
 
-function loadState(): GameState {
+function storageKeyFor(namespace: string): string {
+  return `${STORAGE_PREFIX}:${namespace}`;
+}
+
+function loadState(namespace: string): GameState {
+  const key = storageKeyFor(namespace);
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved = localStorage.getItem(key);
+    // Migrate progress saved before per-user namespacing existed.
+    if (!saved && namespace === 'guest') {
+      const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacy) {
+        saved = legacy;
+        localStorage.setItem(key, legacy);
+      }
+    }
     if (saved) {
       const parsed = JSON.parse(saved);
       return { ...parsed, history: parsed.history || [] };
@@ -77,12 +91,17 @@ function loadState(): GameState {
   return { xp: 0, gold: 0, level: 1, quests: [], rewards: DEFAULT_REWARDS, history: [] };
 }
 
-export function useGameState() {
-  const [state, setState] = useState<GameState>(loadState);
+export function useGameState(namespace: string = 'guest') {
+  const [state, setState] = useState<GameState>(() => loadState(namespace));
+
+  // Reload from storage whenever the active profile (namespace) changes, e.g. on login/logout.
+  useEffect(() => {
+    setState(loadState(namespace));
+  }, [namespace]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
+    localStorage.setItem(storageKeyFor(namespace), JSON.stringify(state));
+  }, [state, namespace]);
 
   const levelInfo = calculateLevel(state.xp);
 

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Store, Coins } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/sonner';
 
 interface MarketItem {
   id: string;
@@ -28,15 +28,13 @@ interface MarketPageProps {
 }
 
 export default function MarketPage({ gold, onSpend }: MarketPageProps) {
-  const { toast } = useToast();
-
   const handleBuy = (item: MarketItem) => {
     if (gold < item.cost) {
-      toast({ title: 'Ouro insuficiente! 😢', description: `Você precisa de ${item.cost} ouro.`, variant: 'destructive' });
+      toast.error('Ouro insuficiente! 😢', { description: `Você precisa de ${item.cost} ouro.` });
       return;
     }
     onSpend(item.cost, item.name);
-    toast({ title: `${item.icon} ${item.name} ativado!`, description: item.effect });
+    toast.success(`${item.icon} ${item.name} ativado!`, { description: item.effect });
   };
 
   return (
@@ -58,7 +56,8 @@ export default function MarketPage({ gold, onSpend }: MarketPageProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="rounded-lg border border-border bg-card p-3 flex flex-col gap-2"
+            whileHover={{ y: -2 }}
+            className="rounded-xl border border-border/60 bg-card p-3 flex flex-col gap-2 shadow-elevation-1 hover:shadow-elevation-2 hover:border-primary/30 transition-all duration-200"
           >
             <div className="flex items-center gap-2">
               <span className="text-2xl">{item.icon}</span>
@@ -71,7 +70,7 @@ export default function MarketPage({ gold, onSpend }: MarketPageProps) {
             <button
               onClick={() => handleBuy(item)}
               disabled={gold < item.cost}
-              className="mt-auto w-full text-[10px] font-bold py-1.5 rounded-md bg-primary/20 text-primary hover:bg-primary/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+              className="mt-auto w-full text-[10px] font-bold py-1.5 rounded-md bg-primary/20 text-primary hover:bg-primary/30 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1"
             >
               <Coins className="w-3 h-3" /> {item.cost}
             </button>

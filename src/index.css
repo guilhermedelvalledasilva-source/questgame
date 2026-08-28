@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -36,6 +36,10 @@
 
     --radius: 0.75rem;
 
+    /* Brand accent used for gradients (distinct from shadcn's --accent surface color) */
+    --violet: 262 83% 63%;
+    --violet-foreground: 210 40% 98%;
+
     --gold: 45 93% 58%;
     --gold-foreground: 45 93% 15%;
     --xp: 142 71% 45%;
@@ -64,22 +68,31 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
+
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
 }
 
 @layer utilities {
-  .font-pixel {
-    font-family: 'Press Start 2P', cursive;
+  .gradient-primary {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--violet)));
   }
 
-  .glow-blue {
-    box-shadow: 0 0 20px hsl(217 91% 60% / 0.3), 0 0 40px hsl(217 91% 60% / 0.1);
+  .gradient-gold {
+    background-image: linear-gradient(135deg, hsl(var(--gold)), hsl(38 92% 50%));
   }
 
-  .glow-gold {
-    box-shadow: 0 0 20px hsl(45 93% 58% / 0.3), 0 0 40px hsl(45 93% 58% / 0.1);
+  .gradient-text-primary {
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--violet)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  .glow-xp {
-    box-shadow: 0 0 15px hsl(142 71% 45% / 0.3);
+  .bg-gradient-hero {
+    background-image:
+      radial-gradient(ellipse 60% 50% at 50% -10%, hsl(var(--primary) / 0.22), transparent),
+      radial-gradient(ellipse 50% 40% at 90% 10%, hsl(var(--violet) / 0.16), transparent);
   }
 }

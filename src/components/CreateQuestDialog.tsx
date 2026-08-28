@@ -45,36 +45,36 @@ export function CreateQuestDialog({ onAdd }: CreateQuestDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 glow-blue font-semibold">
+        <Button type="button" variant="gradient" className="gap-2 font-semibold">
           <Plus className="w-4 h-4" /> Nova Missão
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-md rounded-xl border border-border bg-card p-6">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-md border-border/60 bg-card p-6">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-foreground">⚔️ Criar Missão</DialogTitle>
+          <DialogTitle className="font-display text-lg font-bold text-foreground">⚔️ Criar Missão</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div>
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Título</label>
-            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Ex: Estudar por 1 hora" className="mt-1 bg-muted border-border" />
+            <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Ex: Estudar por 1 hora" className="mt-1 bg-muted border-border/60" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição (opcional)</label>
-            <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Detalhes da missão..." className="mt-1 bg-muted border-border" />
+            <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Detalhes da missão..." className="mt-1 bg-muted border-border/60" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">XP</label>
-              <Input type="number" min={1} value={xp} onChange={e => setXp(Number(e.target.value))} className="mt-1 bg-muted border-border" />
+              <Input type="number" min={1} value={xp} onChange={e => setXp(Number(e.target.value))} className="mt-1 bg-muted border-border/60" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Ouro</label>
-              <Input type="number" min={1} value={gold} onChange={e => setGold(Number(e.target.value))} className="mt-1 bg-muted border-border" />
+              <Input type="number" min={1} value={gold} onChange={e => setGold(Number(e.target.value))} className="mt-1 bg-muted border-border/60" />
             </div>
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data de Entrega (opcional)</label>
-            <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="mt-1 bg-muted border-border" />
+            <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="mt-1 bg-muted border-border/60" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Prioridade</label>
@@ -100,7 +100,7 @@ export function CreateQuestDialog({ onAdd }: CreateQuestDialogProps) {
             <Repeat className="w-4 h-4 text-primary" />
             <span className="text-xs font-medium text-foreground">Missão de rotina</span>
           </label>
-          <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+          <Button type="submit" variant="gradient" className="w-full font-semibold">
             Criar Missão ⚔️
           </Button>
         </form>

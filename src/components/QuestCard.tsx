@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Circle, Trash2, Coins, Sparkles, Edit3, Repeat, Clock } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/sonner';
 import type { Quest, Priority } from '@/hooks/useGameState';
+
+const TOGGLE_LOCK_MS = 500;
 
 const priorityLabels: Record<Priority, string> = {
   low: 'Baixa',
@@ -36,6 +39,23 @@ export function QuestCard({ quest, onToggle, onDelete, onEdit }: QuestCardProps)
   const [priority, setPriority] = useState(quest.priority);
   const [dueDate, setDueDate] = useState(quest.dueDate ? new Date(quest.dueDate).toISOString().split('T')[0] : '');
   const [isRoutine, setIsRoutine] = useState(quest.isRoutine || false);
+  const toggleLockRef = useRef(false);
+
+  const handleToggle = () => {
+    // Ignore rapid double-clicks/taps: without this, a second click landing before
+    // the first re-render can toggle the just-regenerated routine quest, duplicating it.
+    if (toggleLockRef.current) return;
+    toggleLockRef.current = true;
+    setTimeout(() => { toggleLockRef.current = false; }, TOGGLE_LOCK_MS);
+
+    const willComplete = !quest.completed;
+    onToggle(quest.id);
+    if (willComplete) {
+      toast.success(`Missão concluída! ${quest.title}`, {
+        description: `+${quest.xpReward} XP · +${quest.goldReward} 🪙`,
+      });
+    }
+  };
 
   const handleSave = () => {
     onEdit(quest.id, {
@@ -59,21 +79,23 @@ export function QuestCard({ quest, onToggle, onDelete, onEdit }: QuestCardProps)
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className={`group relative rounded-lg border p-4 transition-all cursor-pointer ${
+        whileHover={{ scale: quest.completed ? 1 : 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        className={`group relative rounded-xl border p-4 transition-all duration-200 cursor-pointer shadow-elevation-1 hover:shadow-elevation-2 ${
           quest.completed
             ? 'border-border/50 bg-card/50 opacity-60'
             : isOverdue
               ? 'border-destructive/50 bg-card hover:border-destructive'
-              : 'border-border bg-card hover:border-primary/50'
+              : 'border-border/60 bg-card hover:border-primary/50'
         }`}
-        onClick={() => onToggle(quest.id)}
+        onClick={handleToggle}
       >
         <div className="flex items-start gap-3">
           <div className="mt-0.5">
             {quest.completed ? (
               <CheckCircle2 className="w-5 h-5 text-xp" />
             ) : (
-              <Circle className="w-5 h-5 text-muted-foreground" />
+              <Circle className="w-5 h-5 text-muted-foreground transition-colors group-hover:text-primary" />
             )}
           </div>
           <div className="flex-1 min-w-0">
@@ -126,32 +148,32 @@ export function QuestCard({ quest, onToggle, onDelete, onEdit }: QuestCardProps)
       </motion.div>
 
       <Dialog open={editing} onOpenChange={setEditing}>
-        <DialogContent className="w-[calc(100vw-2rem)] max-w-md rounded-xl border border-border bg-card p-6" onClick={e => e.stopPropagation()}>
+        <DialogContent className="w-[calc(100vw-2rem)] max-w-md border-border/60 bg-card p-6" onClick={e => e.stopPropagation()}>
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold text-foreground">✏️ Editar Missão</DialogTitle>
+            <DialogTitle className="font-display text-lg font-bold text-foreground">✏️ Editar Missão</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-2">
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Título</label>
-              <Input value={title} onChange={e => setTitle(e.target.value)} className="mt-1 bg-muted border-border" />
+              <Input value={title} onChange={e => setTitle(e.target.value)} className="mt-1 bg-muted border-border/60" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
-              <Input value={description} onChange={e => setDescription(e.target.value)} className="mt-1 bg-muted border-border" />
+              <Input value={description} onChange={e => setDescription(e.target.value)} className="mt-1 bg-muted border-border/60" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">XP</label>
-                <Input type="number" min={1} value={xp} onChange={e => setXp(Number(e.target.value))} className="mt-1 bg-muted border-border" />
+                <Input type="number" min={1} value={xp} onChange={e => setXp(Number(e.target.value))} className="mt-1 bg-muted border-border/60" />
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Ouro</label>
-                <Input type="number" min={1} value={gold} onChange={e => setGold(Number(e.target.value))} className="mt-1 bg-muted border-border" />
+                <Input type="number" min={1} value={gold} onChange={e => setGold(Number(e.target.value))} className="mt-1 bg-muted border-border/60" />
               </div>
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Data de Entrega (opcional)</label>
-              <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="mt-1 bg-muted border-border" />
+              <Input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="mt-1 bg-muted border-border/60" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Prioridade</label>
@@ -177,7 +199,7 @@ export function QuestCard({ quest, onToggle, onDelete, onEdit }: QuestCardProps)
               <Repeat className="w-4 h-4 text-primary" />
               <span className="text-xs font-medium text-foreground">Missão de rotina (repete ao completar)</span>
             </label>
-            <Button onClick={handleSave} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
+            <Button onClick={handleSave} variant="gradient" className="w-full font-semibold">
               Salvar ✅
             </Button>
           </div>

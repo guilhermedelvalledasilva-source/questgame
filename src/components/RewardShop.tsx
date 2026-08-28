@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/sonner';
 import type { Reward } from '@/hooks/useGameState';
 
 interface RewardShopProps {
@@ -18,7 +18,6 @@ interface RewardShopProps {
 const EMOJI_OPTIONS = ['🎮', '🍕', '🏖️', '🎬', '🎁', '🎧', '📱', '🍫', '☕', '🎨', '📚', '🛒'];
 
 export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: RewardShopProps) {
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -37,34 +36,36 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <ShoppingBag className="w-5 h-5 text-gold" />
-          <h2 className="text-lg font-bold text-foreground">Loja de Recompensas</h2>
+          <div className="w-8 h-8 rounded-lg gradient-gold flex items-center justify-center shadow-glow-gold">
+            <ShoppingBag className="w-4 h-4 text-white" />
+          </div>
+          <h2 className="font-display text-lg font-bold text-foreground">Loja de Recompensas</h2>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <button
               type="button"
-              className="p-1.5 rounded-lg border border-border bg-muted hover:border-gold/50 hover:bg-gold/10 transition-colors text-gold"
+              className="p-1.5 rounded-lg border border-border/60 bg-muted hover:border-gold/50 hover:bg-gold/10 transition-all duration-200 text-gold"
             >
               <Plus className="w-4 h-4" />
             </button>
           </DialogTrigger>
-          <DialogContent className="w-[calc(100vw-2rem)] max-w-md rounded-xl border border-border bg-card p-6">
+          <DialogContent className="w-[calc(100vw-2rem)] max-w-md border-border/60 bg-card p-6">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-foreground">🎁 Nova Recompensa</DialogTitle>
+              <DialogTitle className="font-display text-lg font-bold text-foreground">🎁 Nova Recompensa</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-2">
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Nome</label>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: 1 Hora de Jogo" className="mt-1 bg-muted border-border" />
+                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: 1 Hora de Jogo" className="mt-1 bg-muted border-border/60" />
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</label>
-                <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Detalhes da recompensa..." className="mt-1 bg-muted border-border" />
+                <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Detalhes da recompensa..." className="mt-1 bg-muted border-border/60" />
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Custo (Ouro)</label>
-                <Input type="number" min={1} value={cost} onChange={e => setCost(Number(e.target.value))} className="mt-1 bg-muted border-border" />
+                <Input type="number" min={1} value={cost} onChange={e => setCost(Number(e.target.value))} className="mt-1 bg-muted border-border/60" />
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 block">Ícone</label>
@@ -74,8 +75,8 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
                       key={e}
                       type="button"
                       onClick={() => setIcon(e)}
-                      className={`text-xl p-1.5 rounded-lg border transition-all ${
-                        icon === e ? 'border-gold/50 bg-gold/20 scale-110' : 'border-border bg-muted hover:border-muted-foreground/30'
+                      className={`text-xl p-1.5 rounded-lg border transition-all duration-200 ${
+                        icon === e ? 'border-gold/50 bg-gold/20 scale-110' : 'border-border/60 bg-muted hover:border-muted-foreground/30'
                       }`}
                     >
                       {e}
@@ -83,7 +84,7 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
                   ))}
                 </div>
               </div>
-              <Button type="submit" className="w-full bg-gold/20 text-gold border border-gold/30 hover:bg-gold/30 font-semibold">
+              <Button type="submit" className="w-full gradient-gold text-white hover:opacity-90 font-semibold shadow-glow-gold">
                 Criar Recompensa 🎁
               </Button>
             </form>
@@ -97,7 +98,7 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 hover:border-gold/30 transition-colors"
+            className="group flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3 shadow-elevation-1 hover:shadow-elevation-2 hover:border-gold/30 transition-all duration-200"
           >
             <span className="text-2xl">{reward.icon}</span>
             <div className="flex-1 min-w-0">
@@ -113,7 +114,7 @@ export function RewardShop({ rewards, gold, onPurchase, onDelete, onAdd }: Rewar
                 disabled={gold < reward.cost}
                 onClick={() => {
                   onPurchase(reward.id);
-                  toast({ title: `${reward.icon} ${reward.name}`, description: 'Recompensa comprada com sucesso!' });
+                  toast.success(`${reward.icon} ${reward.name}`, { description: 'Recompensa comprada com sucesso!' });
                 }}
                 className="text-xs bg-gold/20 text-gold border border-gold/30 hover:bg-gold/30 disabled:opacity-40"
               >

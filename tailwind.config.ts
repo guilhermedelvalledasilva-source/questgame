@@ -21,7 +21,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        pixel: ['"Press Start 2P"', 'cursive'],
+        display: ['"Space Grotesk"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -29,6 +29,10 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        violet: {
+          DEFAULT: "hsl(var(--violet))",
+          foreground: "hsl(var(--violet-foreground))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -86,6 +90,17 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        "elevation-1": "0 1px 2px 0 rgba(0,0,0,0.30)",
+        "elevation-2": "0 4px 14px -2px rgba(0,0,0,0.35), 0 2px 4px -2px rgba(0,0,0,0.20)",
+        "elevation-3": "0 16px 40px -10px rgba(0,0,0,0.50), 0 6px 16px -6px rgba(0,0,0,0.30)",
+        "glow-primary": "0 0 0 1px hsl(217 91% 60% / 0.15), 0 8px 24px -8px hsl(217 91% 60% / 0.45)",
+        "glow-gold": "0 0 0 1px hsl(45 93% 58% / 0.15), 0 8px 24px -8px hsl(45 93% 58% / 0.45)",
+      },
+      backgroundImage: {
+        "gradient-primary": "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--violet)))",
+        "gradient-gold": "linear-gradient(135deg, hsl(var(--gold)), hsl(38 92% 50%))",
       },
       keyframes: {
         "accordion-down": {
