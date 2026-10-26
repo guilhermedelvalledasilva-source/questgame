@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Store, Coins } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
+import type { Buffs } from '@/hooks/useGameState';
 
 interface MarketItem {
   id: string;
@@ -13,29 +14,39 @@ interface MarketItem {
 
 const MARKET_ITEMS: MarketItem[] = [
   { id: 'm1', name: 'Duo XP', description: 'Ganhe XP em dobro na próxima missão!', cost: 150, icon: '⚡', effect: '2x XP' },
-  { id: 'm2', name: 'Extensão de Prazo', description: '+3 dias em qualquer missão ativa.', cost: 80, icon: '⏰', effect: '+3 dias' },
+  { id: 'm2', name: 'Extensão de Prazo', description: '+3 dias na missão ativa com prazo mais próximo.', cost: 80, icon: '⏰', effect: '+3 dias' },
   { id: 'm3', name: 'Desconto Relâmpago', description: '50% de desconto na loja por 1 hora.', cost: 200, icon: '🏷️', effect: '-50%' },
-  { id: 'm4', name: 'Escudo de XP', description: 'Protege seu XP ao falhar uma missão.', cost: 120, icon: '🛡️', effect: 'Proteção' },
+  { id: 'm4', name: 'Escudo de XP', description: 'Protege seu XP na próxima vez que desmarcar uma missão.', cost: 120, icon: '🛡️', effect: 'Proteção' },
   { id: 'm5', name: 'Bônus de Ouro', description: '+50% de ouro nas próximas 3 missões.', cost: 250, icon: '💰', effect: '+50% Ouro' },
   { id: 'm6', name: 'Missão Misteriosa', description: 'Revela uma missão bônus secreta!', cost: 300, icon: '🎲', effect: '??? Missão' },
-  { id: 'm7', name: 'Reset de Rotina', description: 'Reseta todas as rotinas imediatamente.', cost: 100, icon: '🔄', effect: 'Reset' },
-  { id: 'm8', name: 'Amuleto da Sorte', description: 'Chance de ganhar recompensas extras.', cost: 180, icon: '🍀', effect: '+Sorte' },
+  { id: 'm7', name: 'Reset de Rotina', description: 'Reativa todas as suas rotinas e remove duplicadas.', cost: 100, icon: '🔄', effect: 'Reset' },
+  { id: 'm8', name: 'Amuleto da Sorte', description: '40% de chance de ouro em dobro nas próximas 3 missões.', cost: 180, icon: '🍀', effect: '+Sorte' },
 ];
 
 interface MarketPageProps {
   gold: number;
-  onSpend: (amount: number, itemName: string) => void;
+  buffs: Buffs;
+  onBuy: (id: string, cost: number, name: string) => string | null;
 }
 
-export default function MarketPage({ gold, onSpend }: MarketPageProps) {
+export default function MarketPage({ gold, buffs, onBuy }: MarketPageProps) {
   const handleBuy = (item: MarketItem) => {
-    if (gold < item.cost) {
-      toast.error('Ouro insuficiente! 😢', { description: `Você precisa de ${item.cost} ouro.` });
+    const err = onBuy(item.id, item.cost, item.name);
+    if (err) {
+      toast.error(err, { description: `${item.name} custa ${item.cost} ouro.` });
       return;
     }
-    onSpend(item.cost, item.name);
     toast.success(`${item.icon} ${item.name} ativado!`, { description: item.effect });
   };
+
+  const discountMin = Math.max(0, Math.ceil((buffs.discountUntil - Date.now()) / 60000));
+  const active = [
+    buffs.doubleXp > 0 && `⚡ Duo XP x${buffs.doubleXp}`,
+    buffs.goldBonus > 0 && `💰 Bônus de Ouro (${buffs.goldBonus} missões)`,
+    buffs.luck > 0 && `🍀 Sorte (${buffs.luck} missões)`,
+    buffs.xpShield > 0 && `🛡️ Escudo x${buffs.xpShield}`,
+    discountMin > 0 && `🏷️ Desconto (${discountMin} min)`,
+  ].filter(Boolean) as string[];
 
   return (
     <div className="space-y-4">
@@ -48,6 +59,14 @@ export default function MarketPage({ gold, onSpend }: MarketPageProps) {
         </div>
       </div>
       <p className="text-xs text-muted-foreground">Power-ups e itens especiais para turbinar sua jornada!</p>
+
+      {active.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {active.map(a => (
+            <span key={a} className="text-[10px] font-semibold px-2 py-1 rounded-md bg-primary/15 text-primary border border-primary/30">{a}</span>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-2">
         {MARKET_ITEMS.map((item, i) => (
