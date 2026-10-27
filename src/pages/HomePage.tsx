@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Swords, ShoppingBag, BarChart3, Store, Star, Repeat, Clock, Edit3 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const features = [
   { icon: Swords, title: 'Missões', desc: 'Crie tarefas como missões RPG e ganhe XP e ouro ao completá-las.', path: '/quests', color: 'text-primary' },
