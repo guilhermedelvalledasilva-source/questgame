@@ -3,8 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner, toast } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Swords, LogIn, LogOut } from "lucide-react";
-import { useGameState } from "@/hooks/useGameState";
+import { Swords, LogOut } from "lucide-react";
+import { useGameState, isDiscountActive } from "@/hooks/useGameState";
 import { useAuth, type AuthUser } from "@/hooks/useAuth";
 import { PlayerStats } from "@/components/PlayerStats";
 import { BottomNav } from "@/components/BottomNav";
@@ -21,7 +21,7 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const auth = useAuth();
-  const game = useGameState(auth.currentUser?.id ?? "guest");
+  const game = useGameState(auth.currentUser?.id ?? null);
   const [authOpen, setAuthOpen] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "register">("login");
 
@@ -31,13 +31,21 @@ function AppContent() {
   };
 
   const handleAuthSuccess = (user: AuthUser) => {
-    toast.success(`Bem-vindo, ${user.name}! 🎉`, { description: "Seu progresso deste perfil foi carregado." });
+    toast.success(`Bem-vindo, ${user.name}! 🎉`, { description: "Seu progresso foi carregado." });
   };
 
-  if (!auth.hasEntered) {
+  if (auth.loading || (auth.currentUser && !game.loaded)) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Swords className="w-8 h-8 text-primary animate-pulse" />
+      </div>
+    );
+  }
+
+  if (!auth.currentUser) {
     return (
       <>
-        <WelcomePage onStart={auth.enter} onLoginClick={() => openAuth("login")} />
+        <WelcomePage onStart={() => openAuth("register")} onLoginClick={() => openAuth("login")} />
         <AuthDialog
           open={authOpen}
           onOpenChange={setAuthOpen}
@@ -62,29 +70,19 @@ function AppContent() {
               Quest<span className="text-primary">RPG</span>
             </h1>
           </div>
-
-          {auth.currentUser ? (
-            <div className="flex items-center gap-2">
-              <div className="hidden sm:flex flex-col items-end leading-tight">
-                <span className="text-xs font-semibold text-foreground">{auth.currentUser.name}</span>
-                <span className="text-[10px] text-muted-foreground">{auth.currentUser.email}</span>
-              </div>
-              <button
-                onClick={() => { auth.logout(); toast("Você saiu da conta.", { description: "Seus dados continuam salvos neste dispositivo." }); }}
-                title="Sair"
-                className="p-2 rounded-lg border border-border/60 hover:border-destructive/50 hover:text-destructive text-muted-foreground transition-all duration-200"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex flex-col items-end leading-tight">
+              <span className="text-xs font-semibold text-foreground">{auth.currentUser.name}</span>
+              <span className="text-[10px] text-muted-foreground">{auth.currentUser.email}</span>
             </div>
-          ) : (
             <button
-              onClick={() => openAuth("login")}
-              className="flex items-center gap-1.5 text-xs font-semibold text-foreground px-3 py-1.5 rounded-lg border border-border/60 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
+              onClick={async () => { await auth.logout(); toast("Você saiu da conta."); }}
+              title="Sair"
+              className="p-2 rounded-lg border border-border/60 hover:border-destructive/50 hover:text-destructive text-muted-foreground transition-all duration-200"
             >
-              <LogIn className="w-3.5 h-3.5" /> Login
+              <LogOut className="w-4 h-4" />
             </button>
-          )}
+          </div>
         </div>
       </header>
 
@@ -112,13 +110,14 @@ function AppContent() {
             <ShopPage
               rewards={game.rewards}
               gold={game.gold}
+              discountActive={isDiscountActive(game.buffs)}
               onPurchase={game.purchaseReward}
               onDelete={game.deleteReward}
               onAdd={game.addReward}
             />
           } />
           <Route path="/market" element={
-            <MarketPage gold={game.gold} onSpend={game.spendGold} />
+            <MarketPage gold={game.gold} buffs={game.buffs} onBuy={game.buyMarketItem} />
           } />
           <Route path="/charts" element={<ChartsPage history={game.history} />} />
           <Route path="*" element={<NotFound />} />
@@ -126,14 +125,6 @@ function AppContent() {
       </main>
 
       <BottomNav />
-      <AuthDialog
-        open={authOpen}
-        onOpenChange={setAuthOpen}
-        defaultTab={authTab}
-        onLogin={auth.login}
-        onRegister={auth.register}
-        onSuccess={handleAuthSuccess}
-      />
     </div>
   );
 }
