@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Swords, ShoppingBag, BarChart3, Store, Star, Repeat, Clock, Edit3 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const features = [
   { icon: Swords, title: 'Missões', desc: 'Crie tarefas como missões RPG e ganhe XP e ouro ao completá-las.', path: '/quests', color: 'text-primary' },
@@ -18,33 +18,6 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
-      {/* Hero */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center py-8 space-y-3"
-      >
-        <div className="flex justify-center">
-          <motion.div
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ repeat: Infinity, duration: 3 }}
-            className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center shadow-glow-primary"
-          >
-            <Swords className="w-8 h-8 text-white" />
-          </motion.div>
-        </div>
-        <h1 className="text-2xl font-bold text-foreground">Quest<span className="gradient-text-primary">RPG</span></h1>
-        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Transforme suas tarefas diárias em missões épicas! Ganhe XP, colete ouro e suba de nível completando suas quests.
-        </p>
-        <button
-          onClick={() => navigate('/quests')}
-          className="mt-4 px-6 py-2.5 rounded-lg gradient-primary text-white font-semibold text-sm shadow-glow-primary hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-        >
-          Começar Aventura ⚔️
-        </button>
-      </motion.div>
-
       {/* How it works */}
       <div className="space-y-3">
         <h2 className="text-sm font-bold text-foreground text-center uppercase tracking-wider">Como funciona</h2>

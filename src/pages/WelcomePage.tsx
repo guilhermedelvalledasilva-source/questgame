@@ -39,38 +39,35 @@ export default function WelcomePage({ onStart, onLoginClick }: WelcomePageProps)
 
       <main className="max-w-3xl mx-auto px-4 pb-16">
         {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center pt-10 pb-14 space-y-5">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center pt-10 pb-14 space-y-4">
           <motion.div
             animate={{ rotate: [0, 5, -5, 0] }}
             transition={{ repeat: Infinity, duration: 3 }}
             className="flex justify-center"
           >
-            <div className="w-20 h-20 rounded-2xl gradient-primary flex items-center justify-center shadow-glow-primary">
-              <Swords className="w-10 h-10 text-white" />
+            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center shadow-glow-primary">
+              <Swords className="w-8 h-8 text-white" />
             </div>
           </motion.div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
-            Transforme tarefas em <span className="gradient-text-primary">missões épicas</span>
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Quest RPG é um sistema de produtividade gamificado: crie missões a partir das suas tarefas reais, ganhe XP e
-            ouro ao completá-las, suba de nível e troque suas conquistas por recompensas de verdade.
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Quest<span className="gradient-text-primary">RPG</span></h1>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            Transforme suas tarefas diárias em missões épicas! Ganhe XP, colete ouro e suba de nível completando suas quests.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <button
               onClick={onStart}
-              className="px-6 py-3 rounded-lg gradient-primary text-white font-semibold text-sm shadow-glow-primary hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="px-6 py-2.5 rounded-lg gradient-primary text-white font-semibold text-sm shadow-glow-primary hover:opacity-90 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               Começar Aventura ⚔️
             </button>
             <button
               onClick={onLoginClick}
-              className="px-6 py-3 rounded-lg border border-border/60 text-foreground font-semibold text-sm hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
+              className="px-6 py-2.5 rounded-lg border border-border/60 text-foreground font-semibold text-sm hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
             >
               Já tenho conta
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground pt-1">Seu progresso fica salvo automaticamente neste dispositivo.</p>
+          <p className="text-[11px] text-muted-foreground pt-1">Crie sua conta grátis — seu progresso fica salvo na nuvem.</p>
         </motion.div>
 
         {/* Como funciona */}

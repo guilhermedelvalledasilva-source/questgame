@@ -12,7 +12,7 @@ interface AuthDialogProps {
   onOpenChange: (open: boolean) => void;
   defaultTab?: Tab;
   onLogin: (email: string, password: string) => Promise<AuthUser>;
-  onRegister: (name: string, email: string, password: string) => Promise<AuthUser>;
+  onRegister: (name: string, email: string, password: string) => Promise<AuthUser | null>;
   onSuccess: (user: AuthUser) => void;
 }
 
@@ -22,21 +22,30 @@ export function AuthDialog({ open, onOpenChange, defaultTab = 'login', onLogin, 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open) {
       setTab(defaultTab);
       setError('');
+      setInfo('');
     }
   }, [open, defaultTab]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setInfo('');
     setLoading(true);
     try {
       const user = tab === 'login' ? await onLogin(email, password) : await onRegister(name, email, password);
+      if (!user) {
+        setInfo('Conta criada! Enviamos um link de confirmação para o seu email. Confirme e depois entre.');
+        setTab('login');
+        setPassword('');
+        return;
+      }
       setName('');
       setEmail('');
       setPassword('');
